@@ -31,11 +31,19 @@ public class Nodo<T> {
 		return right;
 	}
 	
-	public int calculateLeftLongitud(){
-		return left == null ? 0 : 1 + left.calculateLeftLongitud();
+	public int calcularLeftLongitud(){
+		return left == null ? 0 : 1 + left.calcularLeftLongitud();
 	}
 	
-	public int calculateRightLogitud(){
-		return right == null ? 0 : 1 + right.calculateRightLogitud();
+	public int calcularRightLongitud(){
+		return right == null ? 0 : 1 + right.calcularRightLongitud();
+	}
+	
+	public Nodo<T> getParent(){
+		return parent;
+	}
+	
+	public int calcularAltura(){
+		return parent == null ? 0 : 1 + parent.calcularAltura();
 	}
 }
