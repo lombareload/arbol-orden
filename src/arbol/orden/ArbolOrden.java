@@ -1,5 +1,8 @@
 package arbol.orden;
 
+import arbol.orden.model.Nodo;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -16,6 +19,9 @@ import javafx.stage.Stage;
 
 
 public class ArbolOrden extends Application {
+	
+	private final CharacterIterator iterator = new StringCharacterIterator("ABCDEFGHIJKLMNOPQRST");
+	private final Nodo<Node> arbol = new Nodo<Node>(createElipse(), null);
 	private static final int WIDTH = 600;
 	private static final int HEIGHT = 500;
 	private static final int RADIO = 20;
@@ -23,7 +29,7 @@ public class ArbolOrden extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-		Node inicial = fakeElipse();
+		Node inicial = createElipse();
 		inicial.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			
 			@Override
@@ -55,10 +61,10 @@ public class ArbolOrden extends Application {
 				.stroke(Color.BLACK)
 				.radiusX(RADIO)
 				.radiusY(RADIO)
-				
 				.build();
 		
-		Text text = new Text("A");
+		Text text = new Text(Character.toString(iterator.current()));
+		iterator.next();
 		StackPane stack = new StackPane();
 		stack.getChildren().add(e);
 		stack.getChildren().add(text);
