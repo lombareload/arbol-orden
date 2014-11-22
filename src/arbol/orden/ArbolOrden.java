@@ -20,12 +20,19 @@ public class ArbolOrden extends Application {
 	
 	private final CharacterIterator iterator = new StringCharacterIterator("ABCDEFGHIJKLMNOPQRST");
 	private final Nodo<Node> arbol = new Nodo<Node>(createElipse(), null);
-	private static final int WIDTH = 600;
-	private static final int HEIGHT = 500;
+	private static final int WIDTH = 800;
+	private static final int HEIGHT = 600;
 	private static final int RADIO = 20;
 	private static final int V_OFFSET = 10;
 	private static final int BASE_X = (WIDTH - RADIO)/2;
-	private static final int BASE_Y = RADIO + V_OFFSET;
+	private static final int BASE_Y = RADIO+RADIO + V_OFFSET;
+	private static final int DELTA = 50;
+
+	public ArbolOrden() {
+		arbol.setLeft(new Nodo<Node>(createElipse(), arbol));
+		arbol.getLeft().setLeft(new Nodo<Node>(createElipse(), arbol.getLeft()));
+		arbol.getLeft().setRight(new Nodo<Node>(createElipse(), arbol.getLeft()));
+	}
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -90,15 +97,28 @@ public class ArbolOrden extends Application {
 	
 	private Group poblarTablero(){
 		Group root = new Group();
-		agregarNodos(root, arbol);
+		paintNodos(root, arbol, BASE_X);
 		return root;
 	}
 
-	private void agregarNodos(Group root, Nodo<Node> arbol) {
-		int y = BASE_Y * (arbol.calcularAltura() + 1);
-		int x = BASE_X + (arbol.calcularRightLongitud());
-		arbol.getValue().setLayoutX(x);
-		arbol.getValue().setLayoutY(y);
+	private void paintNodos(
+			final Group root,
+			final Nodo<Node> arbol,
+			final int x) {
+		
+		int nodeY = BASE_Y * (arbol.calcularAltura() + 1);
+		int nodeX = x;
+		arbol.getValue().setLayoutX(nodeX);
+		arbol.getValue().setLayoutY(nodeY);
 		root.getChildren().add(arbol.getValue());
+		
+		Nodo<Node> left = arbol.getLeft();
+		if(left != null){
+			paintNodos(root, left, x - (1 + left.calcularRightLongitud()) * DELTA);
+		}
+		Nodo<Node> right = arbol.getRight();
+		if(right != null){
+			paintNodos(root, right, x + (1 + right.calcularLeftLongitud()) * DELTA);
+		}
 	}
 }
