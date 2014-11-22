@@ -2,20 +2,21 @@ package arbol.orden.model;
 
 public class Nodo<T> {
 	private final T value;
-	private final Nodo<T> parent;
+	private Nodo<T> parent;
 	private Nodo<T> left;
 	private Nodo<T> right;
 
-	public Nodo(T value, Nodo<T> parent) {
+	public Nodo(T value) {
 		this.value = value;
-		this.parent =  parent;
 	}
 	
 	public void setLeft(Nodo<T> left){
+		left.parent = this;
 		this.left = left;
 	}
 
 	public void setRight(Nodo<T> right) {
+		right.parent = this;
 		this.right = right;
 	}
 
@@ -32,11 +33,11 @@ public class Nodo<T> {
 	}
 	
 	public int calcularLeftLongitud(){
-		return left == null ? 0 : 1 + left.calcularLeftLongitud();
+		return (left == null ? 0 : 1 + left.calcularLeftLongitud());
 	}
 	
 	public int calcularRightLongitud(){
-		return right == null ? 0 : 1 + right.calcularRightLongitud();
+		return (right == null ? 0 : 1 + right.calcularRightLongitud());
 	}
 	
 	public Nodo<T> getParent(){
