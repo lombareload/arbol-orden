@@ -12,10 +12,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-/**
- *
- * @author fabian
- */
 public class LeftHandler implements EventHandler<MouseEvent> {
 
 	private final Nodo<Node> nodo;

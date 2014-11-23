@@ -10,10 +10,10 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.text.Text;
 
 public class NodeCreator {
-	private static final int RADIO = 20;
+	public static final int RADIO = 20;
 
-	private final static CharacterIterator iterator = new StringCharacterIterator("ABCDEFGHIJKLMNOPQRST");
-	public NodeCreator() {
+	private final static CharacterIterator iterator = new StringCharacterIterator("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	private NodeCreator() {
 		throw new AssertionError("No debería instanciarse");
 	}
 	public static StackPane createElipse() {
@@ -37,11 +37,13 @@ public class NodeCreator {
 	static public HBox fakeElipse() {
 		Ellipse e = EllipseBuilder
 				.create()
-				.fill(Color.WHITESMOKE)
+				.fill(Color.WHITE)
 				.strokeWidth(3)
 				.radiusX(RADIO)
 				.radiusY(RADIO)
 				.build();
+		e.setOnMouseEntered(new PrettyHover(e));
+		e.setOnMouseExited(new UnprettyHover(e));
 		HBox box = new HBox();
 		box.setStyle("-fx-border-style: dashed;"
 				+ "-fx-border-color: black;"

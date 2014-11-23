@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import static arbol.orden.controller.NodeCreator.createElipse;
 import static arbol.orden.controller.NodeCreator.fakeElipse;
+import static arbol.orden.controller.NodeCreator.RADIO;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -20,7 +21,6 @@ public class ArbolOrden extends Application {
 	private final Nodo<Node> arbol = new Nodo<Node>(createElipse());
 	private static final int WIDTH = 900;
 	private static final int HEIGHT = 600;
-	private static final int RADIO = 20;
 	private static final int V_OFFSET = 10;
 	private static final int BASE_X = (WIDTH - RADIO) / 2;
 	private static final int BASE_Y = RADIO + RADIO + V_OFFSET;
