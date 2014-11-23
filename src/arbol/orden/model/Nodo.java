@@ -9,8 +9,8 @@ public class Nodo<T> {
 	public Nodo(T value) {
 		this.value = value;
 	}
-	
-	public void setLeft(Nodo<T> left){
+
+	public void setLeft(Nodo<T> left) {
 		left.parent = this;
 		this.left = left;
 	}
@@ -31,20 +31,20 @@ public class Nodo<T> {
 	public Nodo<T> getRight() {
 		return right;
 	}
-	
-	public int calcularLeftLongitud(){
-		return (left == null ? 0 : 1 + left.calcularLeftLongitud());
+
+	public int calcularLeftLongitud() {
+		return (left == null ? 0 : 1 + left.calcularLeftLongitud()) + (left == null ? 0 : left.calcularRightLongitud());
 	}
-	
-	public int calcularRightLongitud(){
-		return (right == null ? 0 : 1 + right.calcularRightLongitud());
+
+	public int calcularRightLongitud() {
+		return (right == null ? 0 : 1 + right.calcularRightLongitud()) + (right == null ? 0 : right.calcularLeftLongitud());
 	}
-	
-	public Nodo<T> getParent(){
+
+	public Nodo<T> getParent() {
 		return parent;
 	}
-	
-	public int calcularAltura(){
+
+	public int calcularAltura() {
 		return parent == null ? 0 : 1 + parent.calcularAltura();
 	}
 }
