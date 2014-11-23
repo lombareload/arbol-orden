@@ -7,8 +7,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import static arbol.orden.controller.NodeCreator.createElipse;
 import static arbol.orden.controller.NodeCreator.RADIO;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -24,14 +26,29 @@ public class ArbolOrden extends Application {
 	private static final int BASE_Y = RADIO + RADIO + V_OFFSET;
 	private static final int DELTA = 60;
 	private Stage primaryStage;
+	private final List<Node> inorden = new ArrayList<Node>();
+	private final List<Node> postorden = new ArrayList<Node>();
+	private final List<Node> preorden = new ArrayList<Node>();
 	private final TextField input = createInputTextField();
+	private final Label preLabel = new Label("Preorden:");
+	private final Label postLabel = new Label("Postorden:");
+	private final Label inLabel = new Label("Inorden:");
 	
 	private TextField createInputTextField(){
 		TextField field = new TextField();
 		field.setLayoutX(0);
 		field.setLayoutY(0);
-		field.setOnAction(new InsertHandler(arbol, this));
+		field.setOnAction(new InsertHandler(arbol, this, inorden, postorden, preorden));
 		return field;
+	}
+
+	public ArbolOrden() {
+		inLabel.setLayoutX(20);
+		preLabel.setLayoutX(20);
+		postLabel.setLayoutX(20);
+		inLabel.setLayoutY(450);
+		preLabel.setLayoutY(500);
+		postLabel.setLayoutY(550);
 	}
 
 	@Override
@@ -54,6 +71,7 @@ public class ArbolOrden extends Application {
 
 	private Group pintarInterfaz() {
 		Group root = new Group();
+		paintLabelsOrders(root);
 		root.getChildren().add(input);
 		if(arbol != null && arbol.getValue() != null){
 			paintNodos(root, arbol, BASE_X);
@@ -105,5 +123,29 @@ public class ArbolOrden extends Application {
 		path.getElements().add(new LineTo(x, y));
 		path.setStrokeWidth(3);
 		return path;
+	}
+	
+	private void paintLabelsOrders(final Group root){
+		root.getChildren().add(inLabel);
+		paintOrders(root, 450, inorden);
+		root.getChildren().add(preLabel);
+		paintOrders(root, 500, preorden);
+		root.getChildren().add(postLabel);
+		paintOrders(root, 550, postorden);
+	}
+	
+	private void paintOrders(Group root, int y, List<Node> order){
+		for(int i = 0; i < order.size(); i++){
+			Node current = order.get(i);
+			current.setLayoutY(y);
+			int x = 100 + i * DELTA;
+			current.setLayoutX(x);
+			if(i + 1 < order.size()){
+				MoveTo moveTo = new MoveTo(x + RADIO, y + RADIO);
+				
+				root.getChildren().add(paintLine(moveTo, x + DELTA, y + RADIO));
+			}
+			root.getChildren().add(current);
+		}
 	}
 }
