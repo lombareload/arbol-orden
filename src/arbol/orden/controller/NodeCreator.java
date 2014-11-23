@@ -2,6 +2,7 @@ package arbol.orden.controller;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
+import java.util.Objects;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -12,11 +13,11 @@ import javafx.scene.text.Text;
 public class NodeCreator {
 	public static final int RADIO = 20;
 
-	private final static CharacterIterator iterator = new StringCharacterIterator("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	private NodeCreator() {
 		throw new AssertionError("No debería instanciarse");
 	}
-	public static StackPane createElipse() {
+	public static StackPane createElipse(String value) {
+		Objects.requireNonNull(value, "no puede crear nodo con valores nulos");
 		Ellipse e = EllipseBuilder
 				.create()
 				.fill(Color.WHITESMOKE)
@@ -26,30 +27,10 @@ public class NodeCreator {
 				.radiusY(RADIO)
 				.build();
 
-		Text text = new Text(Character.toString(iterator.current()));
-		iterator.next();
+		Text text = new Text(value);
 		StackPane stack = new StackPane();
 		stack.getChildren().add(e);
 		stack.getChildren().add(text);
 		return stack;
-	}
-	
-	static public HBox fakeElipse() {
-		Ellipse e = EllipseBuilder
-				.create()
-				.fill(Color.WHITE)
-				.strokeWidth(3)
-				.radiusX(RADIO)
-				.radiusY(RADIO)
-				.build();
-		e.setOnMouseEntered(new PrettyHover(e));
-		e.setOnMouseExited(new UnprettyHover(e));
-		HBox box = new HBox();
-		box.setStyle("-fx-border-style: dashed;"
-				+ "-fx-border-color: black;"
-				+ "-fx-border-width: 3;"
-				+ "-fx-border-radius: " + RADIO + ";");
-		box.getChildren().add(e);
-		return box;
 	}
 }

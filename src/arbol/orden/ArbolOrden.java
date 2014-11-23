@@ -1,24 +1,22 @@
 package arbol.orden;
 
-import arbol.orden.controller.LeftHandler;
-import arbol.orden.controller.RightHandler;
+import arbol.orden.controller.InsertHandler;
 import arbol.orden.model.Nodo;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import static arbol.orden.controller.NodeCreator.createElipse;
-import static arbol.orden.controller.NodeCreator.fakeElipse;
 import static arbol.orden.controller.NodeCreator.RADIO;
+import javafx.scene.control.TextField;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
 public class ArbolOrden extends Application {
 
-	private final Nodo<Node> arbol = new Nodo<Node>(createElipse());
+	private final Nodo<Node> arbol = new Nodo<Node>(null);
 	private static final int WIDTH = 900;
 	private static final int HEIGHT = 600;
 	private static final int V_OFFSET = 10;
@@ -26,6 +24,15 @@ public class ArbolOrden extends Application {
 	private static final int BASE_Y = RADIO + RADIO + V_OFFSET;
 	private static final int DELTA = 60;
 	private Stage primaryStage;
+	private final TextField input = createInputTextField();
+	
+	private TextField createInputTextField(){
+		TextField field = new TextField();
+		field.setLayoutX(0);
+		field.setLayoutY(0);
+		field.setOnAction(new InsertHandler(arbol, this));
+		return field;
+	}
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -47,7 +54,10 @@ public class ArbolOrden extends Application {
 
 	private Group pintarInterfaz() {
 		Group root = new Group();
-		paintNodos(root, arbol, BASE_X);
+		root.getChildren().add(input);
+		if(arbol != null && arbol.getValue() != null){
+			paintNodos(root, arbol, BASE_X);
+		}
 		return root;
 	}
 
@@ -72,8 +82,6 @@ public class ArbolOrden extends Application {
 						RADIO + x - (1 + left.calcularRightLongitud()) * DELTA,
 						RADIO + calcularLevel(nodo) + BASE_Y));
 			paintNodos(root, left, x - (1 + left.calcularRightLongitud()) * DELTA);
-		} else {
-			paintFakeNodo(root, nodo, x - DELTA / 2, new LeftHandler(nodo, this));
 		}
 
 		if (right != null) {
@@ -83,18 +91,8 @@ public class ArbolOrden extends Application {
 						RADIO + x + (1 + right.calcularLeftLongitud()) * DELTA,
 						RADIO + calcularLevel(nodo) + BASE_Y));
 			paintNodos(root, right, x + (1 + right.calcularLeftLongitud()) * DELTA);
-		} else {
-			paintFakeNodo(root, nodo, x + DELTA / 2, new RightHandler(nodo, this));
 		}
 		root.getChildren().add(nodo.getValue());
-	}
-
-	private void paintFakeNodo(final Group root, final Nodo<Node> parent, int x, EventHandler handler) {
-		Node fakeNode = fakeElipse();
-		fakeNode.setLayoutY(calcularLevel(parent) + BASE_Y);
-		fakeNode.setLayoutX(x);
-		fakeNode.setOnMouseClicked(handler);
-		root.getChildren().add(fakeNode);
 	}
 
 	private int calcularLevel(Nodo<Node> nodo) {
