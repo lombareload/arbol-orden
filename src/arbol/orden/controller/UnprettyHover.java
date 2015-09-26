@@ -7,15 +7,15 @@ import javafx.scene.shape.Ellipse;
 
 public class UnprettyHover implements EventHandler<MouseEvent> {
 
-	private final Ellipse e;
-	
-	public UnprettyHover(Ellipse e) {
-		this.e = e;
-	}
+    private final Ellipse e;
 
-	@Override
-	public void handle(MouseEvent t) {
-		e.setFill(Color.WHITE);
-	}
-	
+    public UnprettyHover(Ellipse e) {
+        this.e = e;
+    }
+
+    @Override
+    public void handle(MouseEvent t) {
+        e.setFill(Color.WHITE);
+    }
+
 }

@@ -1,9 +1,6 @@
 package arbol.orden.controller;
 
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.Objects;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.EllipseBuilder;
