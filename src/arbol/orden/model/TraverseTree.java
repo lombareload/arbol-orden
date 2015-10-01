@@ -13,7 +13,7 @@ public class TraverseTree {
     }
 
     public static List<String> preorderTree(Nodo<Map.Entry<StackPane, String>> currentNodo, List<String> lista) {
-        if (currentNodo == null) {
+        if (currentNodo == Nodo.EMPTY) {
             return lista;
         }
         lista.add(currentNodo.getValue().getValue());
@@ -23,7 +23,7 @@ public class TraverseTree {
     }
 
     public static List<String> postorderTree(Nodo<Map.Entry<StackPane, String>> currentNodo, List<String> lista) {
-        if (currentNodo == null) {
+        if (currentNodo == Nodo.EMPTY) {
             return lista;
         }
         postorderTree(currentNodo.getLeft(), lista);
@@ -33,7 +33,7 @@ public class TraverseTree {
     }
 
     public static List<String> inorderTree(Nodo<Map.Entry<StackPane, String>> currentNodo, List<String> lista) {
-        if (currentNodo == null) {
+        if (currentNodo == Nodo.EMPTY) {
             return lista;
         }
         inorderTree(currentNodo.getLeft(), lista);
