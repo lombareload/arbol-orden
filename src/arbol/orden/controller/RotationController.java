@@ -11,7 +11,7 @@ public class RotationController {
      * @param shadowTree
      * @return 
      */
-    public static Nodo<Integer> rotate(Nodo<Integer> shadowTree) {
+    public static <T> Nodo<T> rotate(Nodo<T> shadowTree) {
         boolean avlLeft = shadowTree.getLeft().esAVL();
         boolean avlRight = shadowTree.getRight().esAVL();
         if (avlLeft && avlRight) {
@@ -31,8 +31,8 @@ public class RotationController {
      * determina en que dirección debe rotar el nodo
      * @param nodo 
      */
-    private static Nodo<Integer> doRotate(Nodo<Integer> nodo) {
-        Nodo<Integer> parent = nodo.getParent();
+    private static <T> Nodo<T> doRotate(Nodo<T> nodo) {
+        Nodo<T> parent = nodo.getParent();
         if (parent == Nodo.EMPTY) {
             if (nodo.getLeft().getHeight() < nodo.getRight().getHeight()) {
                 return rotateLeft(nodo);
@@ -46,20 +46,20 @@ public class RotationController {
         }
     }
 
-    private static Nodo<Integer> rotateLeft(Nodo<Integer> nodo) {
-        Nodo<Integer> newNodo = new Nodo<>(nodo.getRight().getValue());
-        Nodo<Integer> right = nodo.getRight();
-        Nodo<Integer> newRight = right.getLeft();
+    private static <T> Nodo<T> rotateLeft(Nodo<T> nodo) {
+        Nodo<T> newNodo = new Nodo<T>(nodo.getRight().getValue());
+        Nodo<T> right = nodo.getRight();
+        Nodo<T> newRight = right.getLeft();
         newNodo.setLeft(nodo);
         newNodo.setRight(right.getRight());
         nodo.setRight(newRight);
         return newNodo;
     }
 
-    private static Nodo<Integer> rotateRight(Nodo<Integer> nodo) {
-        Nodo<Integer> newNodo = new Nodo<>(nodo.getLeft().getValue());
-        Nodo<Integer> left = nodo.getLeft();
-        Nodo<Integer> newLeft = left.getRight();
+    private static <T> Nodo<T> rotateRight(Nodo<T> nodo) {
+        Nodo<T> newNodo = new Nodo<T>(nodo.getLeft().getValue());
+        Nodo<T> left = nodo.getLeft();
+        Nodo<T> newLeft = left.getRight();
         newNodo.setRight(nodo);
         newNodo.setLeft(left.getLeft());
         nodo.setLeft(newLeft);

@@ -1,6 +1,7 @@
 package arbol.orden;
 
-import arbol.orden.controller.InsertHandler;
+import arbol.orden.controller.LeftHandler;
+import arbol.orden.controller.NodeCreator;
 import arbol.orden.model.Nodo;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -8,15 +9,19 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import static arbol.orden.controller.NodeCreator.RADIO;
+import arbol.orden.controller.RightHandler;
 import arbol.orden.controller.RotationController;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -24,7 +29,8 @@ import javafx.scene.shape.Path;
 
 public class ArbolOrden extends Application {
 
-    private static final Nodo<Node> arbol = new Nodo<>(null);
+    private Nodo<Entry<StackPane, String>> arbol = new Nodo<>(NodeCreator.createElipse());
+    private final Map<Object, Nodo<Entry<StackPane, String>>> map = new HashMap<>();
     private static final int WIDTH = 900;
     private static final int HEIGHT = 600;
     private static final int V_OFFSET = 10;
@@ -35,34 +41,23 @@ public class ArbolOrden extends Application {
     private static final List<Node> inorden = new ArrayList<>();
     private static final List<Node> postorden = new ArrayList<>();
     private static final List<Node> preorden = new ArrayList<>();
-    private final InsertHandler insertHandler = new InsertHandler(arbol, this, inorden, postorden, preorden);
-    private final TextField input = createInputTextField();
     private final Label preLabel = new Label("Preorden:");
     private final Label postLabel = new Label("Postorden:");
     private final Label inLabel = new Label("Inorden:");
     private static final Button avlButton = new Button("Rotar");
 
-    private TextField createInputTextField() {
+    public ArbolOrden() {
         avlButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Nodo<Integer> rotated = RotationController.rotate(insertHandler.getShadowTree());
-                insertHandler.setShadowTree(rotated);
-                insertHandler.shadowTreeToNodeTree(rotated, arbol);
+                Nodo<Entry<StackPane, String>> rotated = RotationController.rotate(arbol);
+                arbol = rotated;
                 crearTablero();
             }
         });
         avlButton.setLayoutX(WIDTH - 100);
         avlButton.setLayoutY(HEIGHT - 210);
         avlButton.setAlignment(Pos.BASELINE_RIGHT);
-        TextField field = new TextField();
-        field.setLayoutX(0);
-        field.setLayoutY(0);
-        field.setOnAction(insertHandler);
-        return field;
-    }
-
-    public ArbolOrden() {
         inLabel.setLayoutX(20);
         preLabel.setLayoutX(20);
         postLabel.setLayoutX(20);
@@ -92,7 +87,7 @@ public class ArbolOrden extends Application {
     private Group pintarInterfaz() {
         Group root = new Group();
         paintLabelsOrders(root);
-        root.getChildren().add(input);
+//        root.getChildren().add(input);
         paintIsAVLLabel(root);
         root.getChildren().add(avlButton);
         if (arbol != null && arbol.getValue() != null) {
@@ -103,39 +98,43 @@ public class ArbolOrden extends Application {
 
     private void paintNodos(
             final Group root,
-            final Nodo<Node> nodo,
+            final Nodo<Entry<StackPane, String>> nodo,
             final int x) {
 
         int nodeY = calcularLevel(nodo);
         int nodeX = x;
-        nodo.getValue().setLayoutX(nodeX);
-        nodo.getValue().setLayoutY(nodeY);
+        nodo.getValue().getKey().setLayoutX(nodeX);
+        nodo.getValue().getKey().setLayoutY(nodeY);
 
         MoveTo moveTo = new MoveTo(nodeX + RADIO, nodeY + RADIO);
-        Nodo<Node> left = nodo.getLeft();
-        Nodo<Node> right = nodo.getRight();
+        Nodo<Entry<StackPane, String>> left = nodo.getLeft();
+        Nodo<Entry<StackPane, String>> right = nodo.getRight();
 
-        if (left != Nodo.EMPTY) {
+        if (left != null) {
             root.getChildren().add(
                     paintLine(
                             moveTo,
                             RADIO + x - (1 + left.calcularRightLongitud()) * DELTA,
                             RADIO + calcularLevel(nodo) + BASE_Y));
             paintNodos(root, left, x - (1 + left.calcularRightLongitud()) * DELTA);
+        } else {
+            paintFakeNodo(root, nodo, x - DELTA / 2, new LeftHandler(arbol, this, inorden, postorden, preorden, map));
         }
 
-        if (right != Nodo.EMPTY) {
+        if (right != null) {
             root.getChildren().add(
                     paintLine(
                             moveTo,
                             RADIO + x + (1 + right.calcularLeftLongitud()) * DELTA,
                             RADIO + calcularLevel(nodo) + BASE_Y));
             paintNodos(root, right, x + (1 + right.calcularLeftLongitud()) * DELTA);
+        } else {
+            paintFakeNodo(root, nodo, x + DELTA / 2, new RightHandler(arbol, this, inorden, postorden, preorden, map));
         }
-        root.getChildren().add(nodo.getValue());
+        root.getChildren().add(nodo.getValue().getKey());
     }
 
-    private int calcularLevel(Nodo<Node> nodo) {
+    private <T> int calcularLevel(Nodo<T> nodo) {
         return BASE_Y * (nodo.calcularAltura() + 1);
     }
 
@@ -187,5 +186,14 @@ public class ArbolOrden extends Application {
         }
 
         root.getChildren().add(label);
+    }
+
+    private void paintFakeNodo(final Group root, final Nodo<Entry<StackPane, String>> parent, int x, EventHandler handler) {
+        Node fakeNode = NodeCreator.fakeElipse();
+        map.put(fakeNode, parent);
+        fakeNode.setLayoutY(calcularLevel(parent) + BASE_Y);
+        fakeNode.setLayoutX(x);
+        fakeNode.setOnMouseClicked(handler);
+        root.getChildren().add(fakeNode);
     }
 }
