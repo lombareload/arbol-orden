@@ -8,37 +8,57 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import static arbol.orden.controller.NodeCreator.RADIO;
+import arbol.orden.controller.RotationController;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 
 public class ArbolOrden extends Application {
 
-    private final Nodo<Node> arbol = new Nodo<>(null);
+    private static final Nodo<Node> arbol = new Nodo<>(null);
     private static final int WIDTH = 900;
     private static final int HEIGHT = 600;
     private static final int V_OFFSET = 10;
     private static final int BASE_X = (WIDTH - RADIO) / 2;
     private static final int BASE_Y = RADIO + RADIO + V_OFFSET;
-    private static final int DELTA = 60;
+    private static final int DELTA = 40;
     private Stage primaryStage;
-    private final List<Node> inorden = new ArrayList<>();
-    private final List<Node> postorden = new ArrayList<>();
-    private final List<Node> preorden = new ArrayList<>();
+    private static final List<Node> inorden = new ArrayList<>();
+    private static final List<Node> postorden = new ArrayList<>();
+    private static final List<Node> preorden = new ArrayList<>();
+    private final InsertHandler insertHandler = new InsertHandler(arbol, this, inorden, postorden, preorden);
     private final TextField input = createInputTextField();
     private final Label preLabel = new Label("Preorden:");
     private final Label postLabel = new Label("Postorden:");
     private final Label inLabel = new Label("Inorden:");
+    private static final Button avlButton = new Button("Rotar");
 
     private TextField createInputTextField() {
+        avlButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Nodo<Integer> rotated = RotationController.rotate(insertHandler.getShadowTree());
+                insertHandler.setShadowTree(rotated);
+                insertHandler.shadowTreeToNodeTree(rotated, arbol);
+                crearTablero();
+            }
+        });
+        avlButton.setLayoutX(WIDTH - 100);
+        avlButton.setLayoutY(HEIGHT - 210);
+        avlButton.setAlignment(Pos.BASELINE_RIGHT);
         TextField field = new TextField();
         field.setLayoutX(0);
         field.setLayoutY(0);
-        field.setOnAction(new InsertHandler(arbol, this, inorden, postorden, preorden));
+        field.setOnAction(insertHandler);
         return field;
     }
 
@@ -73,6 +93,8 @@ public class ArbolOrden extends Application {
         Group root = new Group();
         paintLabelsOrders(root);
         root.getChildren().add(input);
+        paintIsAVLLabel(root);
+        root.getChildren().add(avlButton);
         if (arbol != null && arbol.getValue() != null) {
             paintNodos(root, arbol, BASE_X);
         }
@@ -93,7 +115,7 @@ public class ArbolOrden extends Application {
         Nodo<Node> left = nodo.getLeft();
         Nodo<Node> right = nodo.getRight();
 
-        if (left != null) {
+        if (left != Nodo.EMPTY) {
             root.getChildren().add(
                     paintLine(
                             moveTo,
@@ -102,7 +124,7 @@ public class ArbolOrden extends Application {
             paintNodos(root, left, x - (1 + left.calcularRightLongitud()) * DELTA);
         }
 
-        if (right != null) {
+        if (right != Nodo.EMPTY) {
             root.getChildren().add(
                     paintLine(
                             moveTo,
@@ -147,5 +169,23 @@ public class ArbolOrden extends Application {
             }
             root.getChildren().add(current);
         }
+    }
+
+    private void paintIsAVLLabel(Group root) {
+        boolean esAVL = arbol.esAVL();
+
+        String message = esAVL ? "Es AVL" : "No es AVL";
+        Label label = new Label(message);
+        label.setLayoutX(WIDTH - 200);
+        label.setLayoutY(HEIGHT - 200);
+        label.setAlignment(Pos.BOTTOM_RIGHT);
+        label.setTextFill(esAVL ? Color.GREEN : Color.RED);
+        if (esAVL) {
+            avlButton.setDisable(true);
+        } else {
+            avlButton.setDisable(false);
+        }
+
+        root.getChildren().add(label);
     }
 }

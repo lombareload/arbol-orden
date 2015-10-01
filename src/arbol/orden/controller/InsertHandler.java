@@ -14,15 +14,14 @@ import java.util.List;
 public class InsertHandler implements EventHandler<ActionEvent> {
 
     private final Nodo<Node> node;
-    private final Nodo<Integer> shadowTree = new Nodo<>(null);
+    private Nodo<Integer> shadowTree = new Nodo<>(null);
     private final ArbolOrden app;
     private final List<Node> inorden;
     private final List<Node> postorden;
     private final List<Node> preorden;
 
     public InsertHandler(Nodo<Node> node, ArbolOrden app, List<Node> inorden, List<Node> postorden, List<Node> preorden) {
-        Objects.requireNonNull(node, "No se puede usar un nodo nulo como argumento");
-        this.node = node;
+        this.node = Objects.requireNonNull(node, "No se puede usar un nodo nulo como argumento");
         this.app = app;
         this.inorden = inorden;
         this.postorden = postorden;
@@ -54,13 +53,13 @@ public class InsertHandler implements EventHandler<ActionEvent> {
 
     private void addInPlace(Nodo<Integer> currentNodo, int intValue) {
         if (intValue > currentNodo.getValue()) {
-            if (currentNodo.getRight() == null) {
+            if (currentNodo.getRight() == Nodo.EMPTY) {
                 currentNodo.setRight(new Nodo<>(intValue));
             } else {
                 addInPlace(currentNodo.getRight(), intValue);
             }
         } else if (intValue < currentNodo.getValue()) {
-            if (currentNodo.getLeft() == null) {
+            if (currentNodo.getLeft() == Nodo.EMPTY) {
                 currentNodo.setLeft(new Nodo<>(intValue));
             } else {
                 addInPlace(currentNodo.getLeft(), intValue);
@@ -68,14 +67,14 @@ public class InsertHandler implements EventHandler<ActionEvent> {
         }
     }
 
-    private void shadowTreeToNodeTree(Nodo<Integer> shadowTree, Nodo<Node> visualTree) {
+    public void shadowTreeToNodeTree(Nodo<Integer> shadowTree, Nodo<Node> visualTree) {
         visualTree.setValue(createElipse(shadowTree.getValue().toString()));
-        if (shadowTree.getLeft() != null) {
+        if (shadowTree.getLeft() != Nodo.EMPTY) {
             Nodo<Node> left = new Nodo<>(null);
             visualTree.setLeft(left);
             shadowTreeToNodeTree(shadowTree.getLeft(), left);
         }
-        if (shadowTree.getRight() != null) {
+        if (shadowTree.getRight() != Nodo.EMPTY) {
             Nodo<Node> right = new Nodo<>(null);
             visualTree.setRight(right);
             shadowTreeToNodeTree(shadowTree.getRight(), right);
@@ -83,7 +82,7 @@ public class InsertHandler implements EventHandler<ActionEvent> {
     }
 
     private List<Integer> preorderTree(Nodo<Integer> currentNodo, List<Integer> lista) {
-        if (currentNodo == null) {
+        if (currentNodo == Nodo.EMPTY) {
             return lista;
         }
         lista.add(currentNodo.getValue());
@@ -93,7 +92,7 @@ public class InsertHandler implements EventHandler<ActionEvent> {
     }
 
     private List<Integer> postorderTree(Nodo<Integer> currentNodo, List<Integer> lista) {
-        if (currentNodo == null) {
+        if (currentNodo == Nodo.EMPTY) {
             return lista;
         }
         postorderTree(currentNodo.getLeft(), lista);
@@ -103,7 +102,7 @@ public class InsertHandler implements EventHandler<ActionEvent> {
     }
 
     private List<Integer> inorderTree(Nodo<Integer> currentNodo, List<Integer> lista) {
-        if (currentNodo == null) {
+        if (currentNodo == Nodo.EMPTY) {
             return lista;
         }
         inorderTree(currentNodo.getLeft(), lista);
@@ -118,5 +117,13 @@ public class InsertHandler implements EventHandler<ActionEvent> {
             nodes.add(createElipse(i.toString()));
         }
         return nodes;
+    }
+
+    public Nodo<Integer> getShadowTree() {
+        return shadowTree;
+    }
+
+    public void setShadowTree(Nodo<Integer> shadowTree) {
+        this.shadowTree = shadowTree;
     }
 }
