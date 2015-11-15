@@ -110,7 +110,7 @@ public class ArbolOrden extends Application {
         Nodo<Entry<StackPane, String>> left = nodo.getLeft();
         Nodo<Entry<StackPane, String>> right = nodo.getRight();
 
-        if (left != null) {
+        if (left != Nodo.EMPTY) {
             root.getChildren().add(
                     paintLine(
                             moveTo,
@@ -121,7 +121,7 @@ public class ArbolOrden extends Application {
             paintFakeNodo(root, nodo, x - DELTA / 2, new LeftHandler(arbol, this, inorden, postorden, preorden, map));
         }
 
-        if (right != null) {
+        if (right != Nodo.EMPTY) {
             root.getChildren().add(
                     paintLine(
                             moveTo,
